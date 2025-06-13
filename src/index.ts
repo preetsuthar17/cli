@@ -14,6 +14,9 @@ program
   .command("add")
   .description("Add components to your project")
   .argument("[components...]", "Component names to install (optional)")
+  .option("--deps", "Automatically install dependencies without prompting")
+  .option("--no-deps", "Skip dependency installation")
+  .option("--fast", "Fast mode: skip dependency installation for maximum speed")
   .action(addComponents);
 
 program

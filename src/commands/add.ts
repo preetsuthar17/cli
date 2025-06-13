@@ -6,6 +6,7 @@ import { join, dirname } from "path";
 import { downloadComponent } from "../utils/download.js";
 import {
   installDependencies,
+  installDependenciesWithProgress,
   checkDependencyManager,
 } from "../utils/dependencies.js";
 import { findProjectRoot } from "../utils/project.js";
@@ -19,7 +20,10 @@ import {
   validateComponentNames,
 } from "../utils/component-resolver.js";
 
-export async function addComponents(componentArgs: string[] = []) {
+export async function addComponents(
+  componentArgs: string[] = [],
+  options: { deps?: boolean; noDeps?: boolean; fast?: boolean } = {}
+) {
   console.clear();
 
   p.intro(pc.bgCyan(pc.black(" HextaUI ")));
@@ -136,21 +140,23 @@ export async function addComponents(componentArgs: string[] = []) {
           .join("\n"),
       "Required Components"
     );
-  }
-
-  // Collect dependencies from all components (requested + required)
+  } // Collect dependencies from all components (requested + required)
   const allDependencies = new Set<string>();
   const componentDependencies: { [key: string]: string[] } = {};
-  let shouldInstallDeps = true; // Default to true
+  let shouldInstallDeps = options.deps || false; // Default to false for speed
+
+  // Fast mode overrides everything
+  if (options.fast) {
+    options.noDeps = true;
+  }
 
   componentsToInstall.forEach((component) => {
     if (component.dependencies && component.dependencies.length > 0) {
       componentDependencies[component.name] = component.dependencies;
       component.dependencies.forEach((dep) => allDependencies.add(dep));
     }
-  });
-  // Show dependencies if any
-  if (allDependencies.size > 0) {
+  }); // Show dependencies if any
+  if (allDependencies.size > 0 && !options.noDeps) {
     // Check which dependencies are already installed
     const { missing, existing } = await checkMissingDependencies(
       Array.from(allDependencies),
@@ -168,23 +174,28 @@ export async function addComponents(componentArgs: string[] = []) {
         ", "
       )}\n`;
     }
-
     if (missing.length > 0) {
       dependencyNote += `${pc.yellow("⚠ Need to install:")} ${missing.join(
         ", "
       )}`;
+      if (!options.deps) {
+        dependencyNote += `\n\n${pc.dim(
+          "💡 Tip: Use --deps to auto-install, --no-deps to skip, or --fast for maximum speed"
+        )}`;
+      }
     } else {
       dependencyNote += `${pc.green(
         "✓ All dependencies are already installed!"
       )}`;
+      shouldInstallDeps = false; // No need to install anything
     }
 
     p.note(dependencyNote, "Dependencies Status");
 
-    if (missing.length > 0) {
+    if (missing.length > 0 && !options.deps) {
       const confirmInstallDeps = await p.confirm({
-        message: `Install ${missing.length} missing dependencies automatically?`,
-        initialValue: true,
+        message: `Install ${missing.length} missing dependencies? (can be slow)`,
+        initialValue: false, // Changed to false for faster workflow
       });
 
       if (p.isCancel(confirmInstallDeps)) {
@@ -195,12 +206,15 @@ export async function addComponents(componentArgs: string[] = []) {
       shouldInstallDeps = confirmInstallDeps;
 
       if (!shouldInstallDeps) {
+        const packageManager = await checkDependencyManager(projectRoot);
         p.log.warn(
-          "Skipping dependency installation. You'll need to install them manually:"
+          "⚡ Skipping dependency installation for speed. Install manually when needed:"
         );
-        p.log.info(`${pc.cyan("pnpm add")} ${missing.join(" ")}`);
-        p.log.info(`${pc.cyan("yarn add")} ${missing.join(" ")}`);
-        p.log.info(`${pc.cyan("npm install")} ${missing.join(" ")}`);
+        p.log.info(
+          `${pc.cyan(
+            `${packageManager} ${packageManager === "npm" ? "install" : "add"}`
+          )} ${missing.join(" ")}`
+        );
       }
     } else {
       shouldInstallDeps = false; // No need to install anything
@@ -221,25 +235,57 @@ export async function addComponents(componentArgs: string[] = []) {
     s.stop("Failed to download components");
     p.cancel(`Error: ${error}`);
     process.exit(1);
-  }
-  // Install dependencies if confirmed
+  } // Install dependencies if confirmed
   if (allDependencies.size > 0 && shouldInstallDeps) {
     const { missing } = await checkMissingDependencies(
       Array.from(allDependencies),
       projectRoot
     );
-
     if (missing.length > 0) {
       const packageManager = await checkDependencyManager(projectRoot);
-      s.start(
-        `Installing ${missing.length} missing dependencies with ${packageManager}...`
-      );
 
       try {
-        await installDependencies(missing, projectRoot);
-        s.stop("Dependencies installed successfully");
+        const { success, failed } = await installDependenciesWithProgress(
+          missing,
+          projectRoot
+        );
+
+        if (success.length > 0 && failed.length === 0) {
+          p.log.success(
+            `All ${pc.green(
+              success.length
+            )} dependencies installed successfully! 🎉`
+          );
+        } else if (success.length > 0 && failed.length > 0) {
+          p.log.success(
+            `${pc.green(success.length)} dependencies installed successfully`
+          );
+          p.log.warn(
+            `${pc.red(failed.length)} dependencies failed: ${failed
+              .map((dep) => pc.yellow(dep))
+              .join(", ")}`
+          );
+          p.log.info(
+            `Install manually: ${pc.cyan(
+              `${packageManager} ${
+                packageManager === "npm" ? "install" : "add"
+              } ${failed.join(" ")}`
+            )}`
+          );
+        } else if (failed.length > 0) {
+          p.log.error(
+            `All ${pc.red(failed.length)} dependencies failed to install`
+          );
+          p.log.info(
+            `Install manually: ${pc.cyan(
+              `${packageManager} ${
+                packageManager === "npm" ? "install" : "add"
+              } ${failed.join(" ")}`
+            )}`
+          );
+        }
       } catch (error) {
-        s.stop("Failed to install some dependencies");
+        p.log.error("Dependency installation failed");
         p.log.warn(`Please manually install: ${pc.yellow(missing.join(" "))}`);
         p.log.info(
           `Run: ${pc.cyan(

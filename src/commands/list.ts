@@ -42,4 +42,9 @@ export async function listComponents() {
       "npx hextaui add Button Card"
     )} to install specific components`
   );
+  p.log.info(
+    `Use ${pc.cyan("--deps")} to auto-install dependencies, ${pc.cyan(
+      "--no-deps"
+    )} to skip, or ${pc.cyan("--fast")} for max speed`
+  );
 }
