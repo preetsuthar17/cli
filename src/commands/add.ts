@@ -191,30 +191,95 @@ export async function addComponents(
     }
 
     p.note(dependencyNote, "Dependencies Status");
-
     if (missing.length > 0 && !options.deps) {
-      const confirmInstallDeps = await p.confirm({
-        message: `Install ${missing.length} missing dependencies? (can be slow)`,
-        initialValue: false, // Changed to false for faster workflow
+      const packageManager = await checkDependencyManager(projectRoot);
+      const installCommand = `${packageManager} ${
+        packageManager === "npm" ? "install" : "add"
+      } ${missing.join(" ")}`;
+
+      const installChoice = await p.select({
+        message: `How would you like to handle ${missing.length} missing dependencies?`,
+        options: [
+          {
+            value: "manual",
+            label: "📋 Manual installation",
+            hint: "Copy install command to clipboard",
+          },
+          {
+            value: "auto",
+            label: "🚀 Automatic installation",
+            hint: "Install dependencies automatically",
+          },
+          {
+            value: "skip",
+            label: "⏭️  Skip for now",
+            hint: "Install dependencies later",
+          },
+        ],
+        initialValue: "manual",
       });
 
-      if (p.isCancel(confirmInstallDeps)) {
+      if (p.isCancel(installChoice)) {
         p.cancel("Installation cancelled.");
         process.exit(0);
       }
+      if (installChoice === "manual") {
+        // Copy to clipboard and show command
+        try {
+          const { spawn } = await import("child_process");
+          const process = require("process");
 
-      shouldInstallDeps = confirmInstallDeps;
+          let clipboardCommand;
+          if (process.platform === "win32") {
+            clipboardCommand = spawn("clip", [], { stdio: "pipe" });
+          } else if (process.platform === "darwin") {
+            clipboardCommand = spawn("pbcopy", [], { stdio: "pipe" });
+          } else {
+            // Linux - try xclip first, then xsel
+            try {
+              clipboardCommand = spawn("xclip", ["-selection", "clipboard"], {
+                stdio: "pipe",
+              });
+            } catch {
+              clipboardCommand = spawn("xsel", ["--clipboard", "--input"], {
+                stdio: "pipe",
+              });
+            }
+          }
 
-      if (!shouldInstallDeps) {
-        const packageManager = await checkDependencyManager(projectRoot);
-        p.log.warn(
-          "⚡ Skipping dependency installation for speed. Install manually when needed:"
-        );
-        p.log.info(
-          `${pc.cyan(
-            `${packageManager} ${packageManager === "npm" ? "install" : "add"}`
-          )} ${missing.join(" ")}`
-        );
+          clipboardCommand.stdin.write(installCommand);
+          clipboardCommand.stdin.end();
+
+          await new Promise((resolve) => {
+            clipboardCommand.on("close", resolve);
+          });
+
+          p.log.success("📋 Install command copied to clipboard!");
+          p.note(
+            `Command copied to clipboard. Paste and run in your terminal:\n\n${pc.cyan(
+              installCommand
+            )}`,
+            "Manual Installation"
+          );
+        } catch (error) {
+          // Fallback if clipboard fails
+          p.note(
+            `Copy and run this command in your terminal:\n\n${pc.cyan(
+              installCommand
+            )}\n\n${pc.dim(
+              "(Auto-copy to clipboard failed - please copy manually)"
+            )}`,
+            "Manual Installation"
+          );
+        }
+        shouldInstallDeps = false;
+      } else if (installChoice === "auto") {
+        shouldInstallDeps = true;
+      } else {
+        // skip
+        p.log.warn("⏭️ Skipping dependency installation. Install when needed:");
+        p.log.info(`${pc.cyan(installCommand)}`);
+        shouldInstallDeps = false;
       }
     } else {
       shouldInstallDeps = false; // No need to install anything

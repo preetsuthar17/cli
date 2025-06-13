@@ -43,8 +43,8 @@ export async function listComponents() {
     )} to install specific components`
   );
   p.log.info(
-    `Use ${pc.cyan("--deps")} to auto-install dependencies, ${pc.cyan(
-      "--no-deps"
-    )} to skip, or ${pc.cyan("--fast")} for max speed`
+    `Dependencies: Choose between ${pc.cyan(
+      "manual"
+    )} (copy to clipboard) or ${pc.cyan("automatic")} installation`
   );
 }
