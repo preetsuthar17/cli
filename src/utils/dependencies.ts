@@ -6,8 +6,8 @@ import { join } from "path";
 const execAsync = promisify(exec);
 
 export async function checkDependencyManager(
-  projectRoot: string,
-): Promise<"pnpm" | "yarn" | "npm"> {
+  projectRoot: string
+): Promise<"pnpm" | "yarn" | "npm" | "bun"> {
   // Check for lock files to determine package manager
   if (existsSync(join(projectRoot, "pnpm-lock.yaml"))) {
     return "pnpm";
@@ -16,13 +16,15 @@ export async function checkDependencyManager(
   if (existsSync(join(projectRoot, "yarn.lock"))) {
     return "yarn";
   }
-
+  if (existsSync(join(projectRoot, "bun.lockb"))) {
+    return "bun";
+  }
   return "npm";
 }
 
 export async function installDependencies(
   dependencies: string[],
-  projectRoot: string,
+  projectRoot: string
 ): Promise<void> {
   if (dependencies.length === 0) return;
 
@@ -36,6 +38,9 @@ export async function installDependencies(
       break;
     case "yarn":
       command = `yarn add ${dependencies.join(" ")}`;
+      break;
+    case "bun":
+      command = `bun add ${dependencies.join(" ")}`;
       break;
     default:
       command = `npm install ${dependencies.join(" ")}`;
