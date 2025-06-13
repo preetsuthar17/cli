@@ -22,7 +22,7 @@ import {
 
 export async function addComponents(
   componentArgs: string[] = [],
-  options: { deps?: boolean; noDeps?: boolean; fast?: boolean } = {}
+  options: { deps?: boolean; noDeps?: boolean; fast?: boolean } = {},
 ) {
   console.clear();
 
@@ -32,7 +32,7 @@ export async function addComponents(
   const projectRoot = await findProjectRoot();
   if (!projectRoot) {
     p.cancel(
-      "Could not find a Next.js project. Please run this command in a Next.js project."
+      "Could not find a Next.js project. Please run this command in a Next.js project.",
     );
     process.exit(1);
   }
@@ -58,7 +58,7 @@ export async function addComponents(
     p.log.step("Running HextaUI initialization...");
     await initCommand();
     p.log.success(
-      "HextaUI initialized successfully! Continuing with component installation...\n"
+      "HextaUI initialized successfully! Continuing with component installation...\n",
     );
   }
 
@@ -81,7 +81,7 @@ export async function addComponents(
             .filter(
               (available) =>
                 available.toLowerCase().includes(name.toLowerCase()) ||
-                name.toLowerCase().includes(available.toLowerCase())
+                name.toLowerCase().includes(available.toLowerCase()),
             )
             .slice(0, 3);
 
@@ -95,7 +95,7 @@ export async function addComponents(
 
       p.cancel(
         `Invalid component name(s):\n  ${suggestions}\n\n` +
-          `Use ${pc.cyan("npx hextaui list")} to see all available components.`
+          `Use ${pc.cyan("npx hextaui list")} to see all available components.`,
       );
       process.exit(1);
     }
@@ -105,7 +105,7 @@ export async function addComponents(
     p.log.step(
       `Installing component${
         selectedComponents.length > 1 ? "s" : ""
-      }: ${selectedComponents.map((name) => pc.cyan(name)).join(", ")}`
+      }: ${selectedComponents.map((name) => pc.cyan(name)).join(", ")}`,
     );
   } else {
     // Show component selection
@@ -138,7 +138,7 @@ export async function addComponents(
         installationList.required
           .map((name) => `  ${pc.cyan("+")} ${name}`)
           .join("\n"),
-      "Required Components"
+      "Required Components",
     );
   } // Collect dependencies from all components (requested + required)
   const allDependencies = new Set<string>();
@@ -160,7 +160,7 @@ export async function addComponents(
     // Check which dependencies are already installed
     const { missing, existing } = await checkMissingDependencies(
       Array.from(allDependencies),
-      projectRoot
+      projectRoot,
     );
 
     const componentDependencyInfo = Object.entries(componentDependencies)
@@ -171,21 +171,21 @@ export async function addComponents(
 
     if (existing.length > 0) {
       dependencyNote += `${pc.green("✓ Already installed:")} ${existing.join(
-        ", "
+        ", ",
       )}\n`;
     }
     if (missing.length > 0) {
       dependencyNote += `${pc.yellow("⚠ Need to install:")} ${missing.join(
-        ", "
+        ", ",
       )}`;
       if (!options.deps) {
         dependencyNote += `\n\n${pc.dim(
-          "💡 Tip: Use --deps to auto-install, --no-deps to skip, or --fast for maximum speed"
+          "💡 Tip: Use --deps to auto-install, --no-deps to skip, or --fast for maximum speed",
         )}`;
       }
     } else {
       dependencyNote += `${pc.green(
-        "✓ All dependencies are already installed!"
+        "✓ All dependencies are already installed!",
       )}`;
       shouldInstallDeps = false; // No need to install anything
     }
@@ -257,19 +257,19 @@ export async function addComponents(
           p.log.success("📋 Install command copied to clipboard!");
           p.note(
             `Command copied to clipboard. Paste and run in your terminal:\n\n${pc.cyan(
-              installCommand
+              installCommand,
             )}`,
-            "Manual Installation"
+            "Manual Installation",
           );
         } catch (error) {
           // Fallback if clipboard fails
           p.note(
             `Copy and run this command in your terminal:\n\n${pc.cyan(
-              installCommand
+              installCommand,
             )}\n\n${pc.dim(
-              "(Auto-copy to clipboard failed - please copy manually)"
+              "(Auto-copy to clipboard failed - please copy manually)",
             )}`,
-            "Manual Installation"
+            "Manual Installation",
           );
         }
         shouldInstallDeps = false;
@@ -304,7 +304,7 @@ export async function addComponents(
   if (allDependencies.size > 0 && shouldInstallDeps) {
     const { missing } = await checkMissingDependencies(
       Array.from(allDependencies),
-      projectRoot
+      projectRoot,
     );
     if (missing.length > 0) {
       const packageManager = await checkDependencyManager(projectRoot);
@@ -312,41 +312,41 @@ export async function addComponents(
       try {
         const { success, failed } = await installDependenciesWithProgress(
           missing,
-          projectRoot
+          projectRoot,
         );
 
         if (success.length > 0 && failed.length === 0) {
           p.log.success(
             `All ${pc.green(
-              success.length
-            )} dependencies installed successfully! 🎉`
+              success.length,
+            )} dependencies installed successfully! 🎉`,
           );
         } else if (success.length > 0 && failed.length > 0) {
           p.log.success(
-            `${pc.green(success.length)} dependencies installed successfully`
+            `${pc.green(success.length)} dependencies installed successfully`,
           );
           p.log.warn(
             `${pc.red(failed.length)} dependencies failed: ${failed
               .map((dep) => pc.yellow(dep))
-              .join(", ")}`
+              .join(", ")}`,
           );
           p.log.info(
             `Install manually: ${pc.cyan(
               `${packageManager} ${
                 packageManager === "npm" ? "install" : "add"
-              } ${failed.join(" ")}`
-            )}`
+              } ${failed.join(" ")}`,
+            )}`,
           );
         } else if (failed.length > 0) {
           p.log.error(
-            `All ${pc.red(failed.length)} dependencies failed to install`
+            `All ${pc.red(failed.length)} dependencies failed to install`,
           );
           p.log.info(
             `Install manually: ${pc.cyan(
               `${packageManager} ${
                 packageManager === "npm" ? "install" : "add"
-              } ${failed.join(" ")}`
-            )}`
+              } ${failed.join(" ")}`,
+            )}`,
           );
         }
       } catch (error) {
@@ -356,8 +356,8 @@ export async function addComponents(
           `Run: ${pc.cyan(
             `${packageManager} ${
               packageManager === "npm" ? "install" : "add"
-            } ${missing.join(" ")}`
-          )}`
+            } ${missing.join(" ")}`,
+          )}`,
         );
       }
     }
@@ -390,7 +390,7 @@ export async function addComponents(
       `${pc.green("✓")} ${
         allDependencies.size
       } dependenc(ies) ${dependencyStatus}`,
-    "Success!"
+    "Success!",
   );
 
   p.outro(pc.green("All components added successfully!"));

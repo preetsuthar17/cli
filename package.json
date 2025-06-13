@@ -1,6 +1,6 @@
 {
   "name": "hextaui",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -8,7 +8,8 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc",
@@ -24,9 +25,21 @@
     "next.js",
     "react",
     "tailwind",
-    "cli"
+    "cli",
+    "ui-library",
+    "component-library",
+    "design-system",
+    "hexta",
+    "hextaui",
+    "frontend",
+    "javascript",
+    "typescript"
   ],
-  "author": "Preet Suthar",
+  "author": {
+    "name": "Preet Suthar",
+    "email": "preetsuthar17@gmail.com",
+    "url": "https://github.com/preetsuthar17"
+  },
   "license": "MIT",
   "description": "Build stunning websites effortlessly. HextaUI CLI tool to easily install components.",
   "homepage": "https://hextaui.com",
@@ -40,6 +53,9 @@
   },
   "engines": {
     "node": ">=16.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "@clack/prompts": "^0.11.0",

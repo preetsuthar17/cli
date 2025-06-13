@@ -8,7 +8,7 @@ import pc from "picocolors";
 const execAsync = promisify(exec);
 
 export async function checkDependencyManager(
-  projectRoot: string
+  projectRoot: string,
 ): Promise<"pnpm" | "yarn" | "npm" | "bun"> {
   // Check for lock files to determine package manager
   if (existsSync(join(projectRoot, "pnpm-lock.yaml"))) {
@@ -26,7 +26,7 @@ export async function checkDependencyManager(
 
 export async function installDependencies(
   dependencies: string[],
-  projectRoot: string
+  projectRoot: string,
 ): Promise<void> {
   if (dependencies.length === 0) return;
 
@@ -64,7 +64,7 @@ export async function installDependencies(
 
 export async function installDependenciesWithProgress(
   dependencies: string[],
-  projectRoot: string
+  projectRoot: string,
 ): Promise<{ success: string[]; failed: string[] }> {
   if (dependencies.length === 0) return { success: [], failed: [] };
 
@@ -75,11 +75,11 @@ export async function installDependenciesWithProgress(
   // Show what we're about to install
   p.log.message(
     `Installing ${pc.cyan(dependencies.length)} dependencies with ${pc.cyan(
-      packageManager
-    )}:`
+      packageManager,
+    )}:`,
   );
   p.log.message(
-    `${dependencies.map((dep) => pc.dim(`• ${dep}`)).join("\n")}\n`
+    `${dependencies.map((dep) => pc.dim(`• ${dep}`)).join("\n")}\n`,
   );
 
   const getCommand = (dep: string) => {
@@ -99,7 +99,7 @@ export async function installDependenciesWithProgress(
     const dep = dependencies[i]!; // Non-null assertion since we know the index is valid
     const progress = `[${i + 1}/${dependencies.length}]`;
     const progressBar = `${pc.dim("━".repeat(i))}${pc.cyan("━")}${pc.dim(
-      "━".repeat(dependencies.length - i - 1)
+      "━".repeat(dependencies.length - i - 1),
     )}`;
 
     try {
@@ -118,8 +118,8 @@ export async function installDependenciesWithProgress(
           const s = p.spinner();
           s.start(
             `${progress} ${progressBar} Retrying ${pc.cyan(
-              dep
-            )} with ${pc.yellow("npm")}...`
+              dep,
+            )} with ${pc.yellow("npm")}...`,
           );
 
           const npmCommand = `npm install ${dep}`;
@@ -127,8 +127,8 @@ export async function installDependenciesWithProgress(
 
           s.stop(
             `${progress} ${pc.green("✓")} ${pc.cyan(dep)} ${pc.dim(
-              "(npm fallback)"
-            )}`
+              "(npm fallback)",
+            )}`,
           );
           success.push(dep);
           continue;

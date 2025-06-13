@@ -5,7 +5,7 @@ import { Component, COMPONENTS } from "../config/components.js";
  */
 export function findComponentByName(name: string): Component | undefined {
   return COMPONENTS.find(
-    (component) => component.name.toLowerCase() === name.toLowerCase()
+    (component) => component.name.toLowerCase() === name.toLowerCase(),
   );
 }
 
@@ -36,7 +36,7 @@ export function validateComponentNames(componentNames: string[]): {
  * Returns a flattened list with no duplicates, in the correct order
  */
 export function resolveRequiredComponents(
-  componentNames: string[]
+  componentNames: string[],
 ): Component[] {
   const resolvedComponents = new Map<string, Component>();
   const visited = new Set<string>();
