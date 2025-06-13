@@ -1,11 +1,42 @@
 import { Component, COMPONENTS } from "../config/components.js";
 
 /**
+ * Finds a component by name (case-insensitive)
+ */
+export function findComponentByName(name: string): Component | undefined {
+  return COMPONENTS.find(
+    (component) => component.name.toLowerCase() === name.toLowerCase()
+  );
+}
+
+/**
+ * Validates component names and returns found components with any invalid names
+ */
+export function validateComponentNames(componentNames: string[]): {
+  validComponents: Component[];
+  invalidNames: string[];
+} {
+  const validComponents: Component[] = [];
+  const invalidNames: string[] = [];
+
+  for (const name of componentNames) {
+    const component = findComponentByName(name);
+    if (component) {
+      validComponents.push(component);
+    } else {
+      invalidNames.push(name);
+    }
+  }
+
+  return { validComponents, invalidNames };
+}
+
+/**
  * Resolves all required components for a given set of components
  * Returns a flattened list with no duplicates, in the correct order
  */
 export function resolveRequiredComponents(
-  componentNames: string[],
+  componentNames: string[]
 ): Component[] {
   const resolvedComponents = new Map<string, Component>();
   const visited = new Set<string>();

@@ -9,21 +9,21 @@ export async function listComponents() {
 
   // Group components by type
   const fileComponents = COMPONENTS.filter((c) =>
-    c.files.some((f) => f.type === "file"),
+    c.files.some((f) => f.type === "file")
   );
   const folderComponents = COMPONENTS.filter((c) =>
-    c.files.some((f) => f.type === "folder"),
+    c.files.some((f) => f.type === "folder")
   );
 
   const simpleComponents = fileComponents
     .map(
-      (c) => `${pc.green("●")} ${pc.cyan(c.name.padEnd(15))} ${c.description}`,
+      (c) => `${pc.green("●")} ${pc.cyan(c.name.padEnd(15))} ${c.description}`
     )
     .join("\n");
 
   const complexComponents = folderComponents
     .map(
-      (c) => `${pc.blue("●")} ${pc.cyan(c.name.padEnd(15))} ${c.description}`,
+      (c) => `${pc.blue("●")} ${pc.cyan(c.name.padEnd(15))} ${c.description}`
     )
     .join("\n");
 
@@ -31,8 +31,15 @@ export async function listComponents() {
     `${pc.bold("Simple Components:")}\n${simpleComponents}\n\n` +
       `${pc.bold("Complex Components:")}\n${complexComponents}\n\n` +
       `${pc.dim("Total:")} ${COMPONENTS.length} components available`,
-    "Available Components",
+    "Available Components"
   );
 
-  p.log.info(`Run ${pc.cyan("npx hextaui add")} to install components`);
+  p.log.info(
+    `Run ${pc.cyan("npx hextaui add")} to select components interactively`
+  );
+  p.log.info(
+    `Or run ${pc.cyan(
+      "npx hextaui add Button Card"
+    )} to install specific components`
+  );
 }

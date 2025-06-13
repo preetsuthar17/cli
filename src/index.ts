@@ -13,6 +13,7 @@ program
 program
   .command("add")
   .description("Add components to your project")
+  .argument("[components...]", "Component names to install (optional)")
   .action(addComponents);
 
 program

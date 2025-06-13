@@ -16,9 +16,10 @@ import { initCommand } from "./init.js";
 import {
   resolveRequiredComponents,
   getInstallationList,
+  validateComponentNames,
 } from "../utils/component-resolver.js";
 
-export async function addComponents() {
+export async function addComponents(componentArgs: string[] = []) {
   console.clear();
 
   p.intro(pc.bgCyan(pc.black(" HextaUI ")));
@@ -27,7 +28,7 @@ export async function addComponents() {
   const projectRoot = await findProjectRoot();
   if (!projectRoot) {
     p.cancel(
-      "Could not find a Next.js project. Please run this command in a Next.js project.",
+      "Could not find a Next.js project. Please run this command in a Next.js project."
     );
     process.exit(1);
   }
@@ -53,29 +54,77 @@ export async function addComponents() {
     p.log.step("Running HextaUI initialization...");
     await initCommand();
     p.log.success(
-      "HextaUI initialized successfully! Continuing with component installation...\n",
+      "HextaUI initialized successfully! Continuing with component installation...\n"
     );
   }
 
   // Now we know HextaUI is initialized
   const componentsDir = join(projectRoot, "src", "components", "ui");
-  // Show component selection
-  const selectedComponents = await p.multiselect({
-    message: "Which components would you like to add?",
-    options: COMPONENTS.map((component) => ({
-      value: component.name,
-      label: component.name,
-      hint: component.description,
-    })),
-    required: false,
-  });
-  if (p.isCancel(selectedComponents) || selectedComponents.length === 0) {
-    p.cancel("No components selected.");
-    process.exit(0);
+
+  let selectedComponents: string[] = [];
+
+  // Check if components were provided as arguments
+  if (componentArgs.length > 0) {
+    const { validComponents, invalidNames } =
+      validateComponentNames(componentArgs);
+
+    if (invalidNames.length > 0) {
+      const availableNames = COMPONENTS.map((c) => c.name);
+      const suggestions = invalidNames
+        .map((name) => {
+          // Find close matches using simple string similarity
+          const closeMatches = availableNames
+            .filter(
+              (available) =>
+                available.toLowerCase().includes(name.toLowerCase()) ||
+                name.toLowerCase().includes(available.toLowerCase())
+            )
+            .slice(0, 3);
+
+          return closeMatches.length > 0
+            ? `${pc.red(name)} → Did you mean: ${closeMatches
+                .map((m) => pc.cyan(m))
+                .join(", ")}?`
+            : `${pc.red(name)} → No close matches found`;
+        })
+        .join("\n  ");
+
+      p.cancel(
+        `Invalid component name(s):\n  ${suggestions}\n\n` +
+          `Use ${pc.cyan("npx hextaui list")} to see all available components.`
+      );
+      process.exit(1);
+    }
+
+    selectedComponents = validComponents.map((c) => c.name);
+
+    p.log.step(
+      `Installing component${
+        selectedComponents.length > 1 ? "s" : ""
+      }: ${selectedComponents.map((name) => pc.cyan(name)).join(", ")}`
+    );
+  } else {
+    // Show component selection
+    const userSelection = await p.multiselect({
+      message: "Which components would you like to add?",
+      options: COMPONENTS.map((component) => ({
+        value: component.name,
+        label: component.name,
+        hint: component.description,
+      })),
+      required: false,
+    });
+
+    if (p.isCancel(userSelection) || userSelection.length === 0) {
+      p.cancel("No components selected.");
+      process.exit(0);
+    }
+
+    selectedComponents = userSelection as string[];
   }
 
   // Resolve required components
-  const installationList = getInstallationList(selectedComponents as string[]);
+  const installationList = getInstallationList(selectedComponents);
   const componentsToInstall = installationList.total;
 
   // Show required components if any
@@ -85,7 +134,7 @@ export async function addComponents() {
         installationList.required
           .map((name) => `  ${pc.cyan("+")} ${name}`)
           .join("\n"),
-      "Required Components",
+      "Required Components"
     );
   }
 
@@ -105,7 +154,7 @@ export async function addComponents() {
     // Check which dependencies are already installed
     const { missing, existing } = await checkMissingDependencies(
       Array.from(allDependencies),
-      projectRoot,
+      projectRoot
     );
 
     const componentDependencyInfo = Object.entries(componentDependencies)
@@ -116,17 +165,17 @@ export async function addComponents() {
 
     if (existing.length > 0) {
       dependencyNote += `${pc.green("✓ Already installed:")} ${existing.join(
-        ", ",
+        ", "
       )}\n`;
     }
 
     if (missing.length > 0) {
       dependencyNote += `${pc.yellow("⚠ Need to install:")} ${missing.join(
-        ", ",
+        ", "
       )}`;
     } else {
       dependencyNote += `${pc.green(
-        "✓ All dependencies are already installed!",
+        "✓ All dependencies are already installed!"
       )}`;
     }
 
@@ -147,7 +196,7 @@ export async function addComponents() {
 
       if (!shouldInstallDeps) {
         p.log.warn(
-          "Skipping dependency installation. You'll need to install them manually:",
+          "Skipping dependency installation. You'll need to install them manually:"
         );
         p.log.info(`${pc.cyan("pnpm add")} ${missing.join(" ")}`);
         p.log.info(`${pc.cyan("yarn add")} ${missing.join(" ")}`);
@@ -177,13 +226,13 @@ export async function addComponents() {
   if (allDependencies.size > 0 && shouldInstallDeps) {
     const { missing } = await checkMissingDependencies(
       Array.from(allDependencies),
-      projectRoot,
+      projectRoot
     );
 
     if (missing.length > 0) {
       const packageManager = await checkDependencyManager(projectRoot);
       s.start(
-        `Installing ${missing.length} missing dependencies with ${packageManager}...`,
+        `Installing ${missing.length} missing dependencies with ${packageManager}...`
       );
 
       try {
@@ -196,8 +245,8 @@ export async function addComponents() {
           `Run: ${pc.cyan(
             `${packageManager} ${
               packageManager === "npm" ? "install" : "add"
-            } ${missing.join(" ")}`,
-          )}`,
+            } ${missing.join(" ")}`
+          )}`
         );
       }
     }
@@ -230,7 +279,7 @@ export async function addComponents() {
       `${pc.green("✓")} ${
         allDependencies.size
       } dependenc(ies) ${dependencyStatus}`,
-    "Success!",
+    "Success!"
   );
 
   p.outro(pc.green("All components added successfully!"));

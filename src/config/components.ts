@@ -174,7 +174,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "calendar.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/Calendar/calendar.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/calendar.tsx",
         type: "file",
       },
     ],
