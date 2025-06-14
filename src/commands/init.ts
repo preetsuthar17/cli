@@ -9,6 +9,240 @@ import {
 } from "../utils/dependencies.js";
 import { createInitMarker } from "../utils/init-check.js";
 
+const HEXTAUI_CSS_VARIABLES = `
+:root {
+  --hu-font-geist: var(--font-geist);
+  --hu-font-jetbrains: var(--font-jetbrains-mono);
+
+  --radius: 0.75rem;
+
+  --hu-background: 0, 0%, 100%;
+  --hu-foreground: 0, 0%, 14%;
+
+  --hu-card: 0, 0%, 99%;
+  --hu-card-foreground: 0, 0%, 14%;
+
+  --hu-primary: 0, 0%, 20%;
+  --hu-primary-foreground: 0, 0%, 98%;
+
+  --hu-secondary: 0, 0%, 97%;
+  --hu-secondary-foreground: 0, 0%, 20%;
+
+  --hu-muted: 0, 0%, 97%;
+  --hu-muted-foreground: 0, 0%, 56%;
+
+  --hu-accent: 0, 0%, 96%;
+  --hu-accent-foreground: 0, 0%, 20%;
+
+  --hu-destructive: 9, 96%, 47%;
+  --hu-destructive-foreground: 0, 0%, 98%;
+
+  --hu-border: 0, 0%, 92%;
+  --hu-input: 0, 0%, 100%;
+  --hu-ring: 0, 0%, 71%;
+
+  --color-fd-background: hsl(var(--hu-background));
+}
+
+.dark {
+  --hu-background: 0, 0%, 7%;
+  --hu-foreground: 0, 0%, 100%;
+
+  --hu-card: 0, 0%, 9%;
+  --hu-card-foreground: 0, 0%, 100%;
+
+  --hu-primary: 0, 0%, 100%;
+  --hu-primary-foreground: 0, 0%, 20%;
+
+  --hu-secondary: 0, 0%, 15%;
+  --hu-secondary-foreground: 0, 0%, 100%;
+
+  --hu-muted: 0, 0%, 15%;
+  --hu-muted-foreground: 0, 0%, 71%;
+
+  --hu-accent: 0, 0%, 15%;
+  --hu-accent-foreground: 0, 0%, 100%;
+
+  --hu-destructive: 0, 84%, 50%;
+  --hu-destructive-foreground: 0, 0%, 98%;
+
+  --hu-border: 0, 0%, 100%, 10%;
+  --hu-input: 0, 0%, 100%, 5%;
+  --hu-ring: 0, 0%, 56%;
+}`;
+
+async function findGlobalCssFile(projectRoot: string): Promise<string | null> {
+  const possiblePaths = [
+    "src/app/globals.css",
+    "app/globals.css",
+    "src/styles/globals.css",
+    "styles/globals.css",
+    "src/global.css",
+    "global.css",
+    "src/app/global.css",
+    "app/global.css",
+  ];
+
+  for (const possiblePath of possiblePaths) {
+    const fullPath = join(projectRoot, possiblePath);
+    if (await fs.pathExists(fullPath)) {
+      return fullPath;
+    }
+  }
+
+  return null;
+}
+
+function removeExistingHextaUIVariables(content: string): string {
+  const lines = content.split("\n");
+  const cleanedLines: string[] = [];
+  let insideHextaUIBlock = false;
+  let braceCount = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (!line) continue;
+
+    const trimmedLine = line.trim();
+
+    // Detect start of potential HextaUI block
+    if (trimmedLine === ":root {" || trimmedLine === ".dark {") {
+      // Look ahead to see if this contains HextaUI variables
+      let containsHextaUIVars = false;
+      for (let j = i + 1; j < Math.min(i + 10, lines.length); j++) {
+        const lookAheadLine = lines[j];
+        if (!lookAheadLine) continue;
+
+        if (
+          lookAheadLine.includes("--hu-") ||
+          lookAheadLine.includes("--radius:") ||
+          lookAheadLine.includes("--color-fd-")
+        ) {
+          containsHextaUIVars = true;
+          break;
+        }
+        if (lookAheadLine.trim() === "}") break;
+      }
+
+      if (containsHextaUIVars) {
+        insideHextaUIBlock = true;
+        braceCount = 1;
+        continue;
+      }
+    }
+
+    if (insideHextaUIBlock) {
+      // Count braces to know when block ends
+      braceCount += (line.match(/{/g) || []).length;
+      braceCount -= (line.match(/}/g) || []).length;
+
+      if (braceCount === 0) {
+        insideHextaUIBlock = false;
+      }
+      continue;
+    }
+
+    // Skip individual HextaUI variable lines
+    if (
+      trimmedLine.startsWith("--hu-") ||
+      trimmedLine.startsWith("--radius:") ||
+      trimmedLine.startsWith("--color-fd-")
+    ) {
+      continue;
+    }
+
+    cleanedLines.push(line);
+  }
+
+  return cleanedLines.join("\n").replace(/\n{3,}/g, "\n\n");
+}
+
+async function injectCssVariables(projectRoot: string): Promise<void> {
+  const globalCssPath = await findGlobalCssFile(projectRoot);
+
+  if (!globalCssPath) {
+    p.log.warn("⚠️  Could not find global.css file automatically.");
+    p.note(
+      `Please create a global.css file and add these variables:\n\n${HEXTAUI_CSS_VARIABLES}`,
+      "CSS Variables (Manual Setup)",
+    );
+    return;
+  }
+
+  const relativePath = globalCssPath
+    .replace(projectRoot, "")
+    .replace(/^[\/\\]/, "");
+
+  // Read existing content
+  const existingContent = await fs.readFile(globalCssPath, "utf-8");
+
+  // Check if HextaUI variables already exist
+  if (
+    existingContent.includes("--hu-background") ||
+    existingContent.includes("--hu-foreground")
+  ) {
+    const shouldReplace = await p.confirm({
+      message: `HextaUI CSS variables already exist in ${relativePath}. Replace them?`,
+      initialValue: false,
+    });
+
+    if (p.isCancel(shouldReplace) || !shouldReplace) {
+      p.log.step("Skipping CSS variables injection.");
+      return;
+    }
+
+    // Remove existing HextaUI variables
+    const cleanedContent = removeExistingHextaUIVariables(existingContent);
+    const newContent =
+      cleanedContent.trimEnd() + "\n\n" + HEXTAUI_CSS_VARIABLES + "\n";
+
+    await fs.writeFile(globalCssPath, newContent);
+    p.log.success(
+      `✓ Updated HextaUI CSS variables in ${pc.cyan(relativePath)}`,
+    );
+  } else {
+    // Check if there are existing CSS variables that might conflict
+    const hasExistingVars =
+      existingContent.includes(":root") || existingContent.includes("--");
+
+    if (hasExistingVars) {
+      p.log.warn(
+        `⚠️  Existing CSS variables found in ${relativePath}.\n` +
+          `   Please review and remove any conflicting variables.`,
+      );
+
+      const shouldContinue = await p.confirm({
+        message: "Continue adding HextaUI CSS variables?",
+        initialValue: true,
+      });
+
+      if (p.isCancel(shouldContinue) || !shouldContinue) {
+        p.log.step("Skipping CSS variables injection.");
+        return;
+      }
+    }
+
+    // Add HextaUI variables to the end of the file
+    const newContent =
+      existingContent.trimEnd() + "\n\n" + HEXTAUI_CSS_VARIABLES + "\n";
+    await fs.writeFile(globalCssPath, newContent);
+    p.log.success(`✓ Added HextaUI CSS variables to ${pc.cyan(relativePath)}`);
+  }
+
+  // Show important note about variable usage
+  p.note(
+    `🎨 HextaUI CSS variables have been added to your global stylesheet.\n\n` +
+      `These variables provide:\n` +
+      `• Light and dark theme support\n` +
+      `• Consistent color scheme across components\n` +
+      `• Easy customization of the design system\n\n` +
+      `${pc.yellow(
+        "Important:",
+      )} Remove any conflicting CSS variables to avoid styling issues.`,
+    "CSS Variables Added",
+  );
+}
+
 export async function initCommand() {
   console.clear();
 
@@ -349,12 +583,30 @@ export function getFormatPlaceholder(format: ColorFormat): string {
     } // Create initialization marker
     await createInitMarker(projectRoot);
 
+    // Add CSS variables injection step
+    const shouldInjectCss = await p.confirm({
+      message: "Add HextaUI CSS variables to your global stylesheet?",
+      initialValue: true,
+    });
+
+    if (!p.isCancel(shouldInjectCss) && shouldInjectCss) {
+      await injectCssVariables(projectRoot);
+    } else {
+      p.note(
+        `You can manually add the CSS variables later:\n\n${HEXTAUI_CSS_VARIABLES}`,
+        "CSS Variables (Manual Setup)",
+      );
+    }
+
     p.note(
       `Created:\n` +
         `${pc.cyan("src/components/ui/")} - Components directory\n` +
         `${pc.cyan("src/lib/utils.ts")} - Utility functions\n` +
         `${pc.cyan("src/lib/color-utils.ts")} - Color utility functions\n\n` +
-        `${pc.green("✓")} Base dependencies installed`,
+        `${pc.green("✓")} Base dependencies installed\n` +
+        `${pc.green("✓")} CSS variables ${
+          shouldInjectCss ? "added" : "skipped"
+        }`,
       "Files created",
     );
 
