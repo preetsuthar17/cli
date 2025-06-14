@@ -1,6 +1,6 @@
 {
   "name": "hextaui",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -32,7 +32,7 @@
   ],
   "author": {
     "name": "Preet Suthar",
-    "email": "preetsuthar17@gmail.com",
+    "email": "hi@preetsuthar.me",
     "url": "https://github.com/preetsuthar17"
   },
   "license": "MIT",
