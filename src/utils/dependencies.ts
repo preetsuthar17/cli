@@ -18,7 +18,7 @@ export async function checkDependencyManager(
   if (existsSync(join(projectRoot, "yarn.lock"))) {
     return "yarn";
   }
-  if (existsSync(join(projectRoot, "bun.lockb"))) {
+  if (existsSync(join(projectRoot, "bun.lock"))) {
     return "bun";
   }
   return "npm";
