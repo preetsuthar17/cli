@@ -387,7 +387,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "sidebar.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/content/docs/ui/components/sidebar.mdx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/Sidebar/sidebar.tsx",
         type: "file",
       },
     ],
