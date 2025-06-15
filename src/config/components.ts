@@ -382,6 +382,18 @@ export const COMPONENTS: Component[] = [
     dependencies: ["@radix-ui/react-select"],
   },
   {
+    name: "Sidebar",
+    description: "Sidebar navigation component",
+    files: [
+      {
+        path: "sidebar.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/content/docs/ui/components/sidebar.mdx",
+        type: "file",
+      },
+    ],
+    dependencies: ["motion", "class-variance-authority", "lucide-react"],
+  },
+  {
     name: "Skeleton",
     description: "Loading skeleton placeholders",
     files: [
