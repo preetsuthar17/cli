@@ -486,4 +486,16 @@ export const COMPONENTS: Component[] = [
     ],
     dependencies: ["@radix-ui/react-toggle"],
   },
+  {
+    name: "Video Player",
+    description: "Video player component with controls",
+    files: [
+      {
+        path: "video-player.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/VideoPlayer/video-player.tsx",
+        type: "file",
+      },
+    ],
+    dependencies: ["video-player"],
+  },
 ];
