@@ -20,7 +20,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "button.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/button.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/button.tsx",
         type: "file",
       },
     ],
@@ -32,7 +32,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "card.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/card.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/card.tsx",
         type: "file",
       },
     ],
@@ -43,7 +43,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "input.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/input.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/input.tsx",
         type: "file",
       },
     ],
@@ -54,7 +54,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "label.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/label.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/label.tsx",
         type: "file",
       },
     ],
@@ -66,7 +66,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "avatar.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/avatar.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/avatar.tsx",
         type: "file",
       },
     ],
@@ -79,7 +79,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "breadcrumb.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/breadcrumb.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/breadcrumb.tsx",
         type: "file",
       },
     ],
@@ -91,7 +91,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "kbd.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/kbd.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/kbd.tsx",
         type: "file",
       },
     ],
@@ -102,7 +102,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "separator.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/separator.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/separator.tsx",
         type: "file",
       },
     ],
@@ -114,7 +114,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "tooltip.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/tooltip.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/tooltip.tsx",
         type: "file",
       },
     ],
@@ -126,7 +126,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "file-upload.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/file-upload.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/file-upload.tsx",
         type: "file",
       },
     ],
@@ -139,7 +139,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "accordion.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/accordion.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/accordion.tsx",
         type: "file",
       },
     ],
@@ -151,7 +151,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "alert.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/alert.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/alert.tsx",
         type: "file",
       },
     ],
@@ -162,7 +162,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "badge.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/badge.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/badge.tsx",
         type: "file",
       },
     ],
@@ -174,7 +174,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "calendar.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/calendar.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/calendar.tsx",
         type: "file",
       },
     ],
@@ -185,7 +185,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "checkbox.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/checkbox.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/checkbox.tsx",
         type: "file",
       },
     ],
@@ -197,7 +197,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "chip.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/chip.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/chip.tsx",
         type: "file",
       },
     ],
@@ -208,7 +208,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "color-picker.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/color-picker.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/color-picker.tsx",
         type: "file",
       },
     ],
@@ -221,7 +221,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "command-menu.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/command-menu.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/command-menu.tsx",
         type: "file",
       },
     ],
@@ -233,7 +233,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "date-picker.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/datepicker.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/datepicker.tsx",
         type: "file",
       },
     ],
@@ -244,7 +244,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "drawer.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/drawer.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/drawer.tsx",
         type: "file",
       },
     ],
@@ -256,7 +256,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "dropdown-menu.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/dropdown-menu.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/dropdown-menu.tsx",
         type: "file",
       },
     ],
@@ -268,7 +268,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "input-otp.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/input-otp.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/input-otp.tsx",
         type: "file",
       },
     ],
@@ -280,7 +280,18 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "loader.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/loader.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/loader.tsx",
+        type: "file",
+      },
+    ],
+  },
+  {
+    name: "Marquee",
+    description: "Scrolling marquee text or content",
+    files: [
+      {
+        path: "marquee.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/marquee.tsx",
         type: "file",
       },
     ],
@@ -291,7 +302,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "menu-bar.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/menubar.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/menubar.tsx",
         type: "file",
       },
     ],
@@ -303,7 +314,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "modal.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/modal.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/modal.tsx",
         type: "file",
       },
     ],
@@ -316,7 +327,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "pagination.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/pagination.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/pagination.tsx",
         type: "file",
       },
     ],
@@ -327,7 +338,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "progress.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/progress.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/progress.tsx",
         type: "file",
       },
     ],
@@ -339,7 +350,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "radio.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/radio.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/radio.tsx",
         type: "file",
       },
     ],
@@ -351,7 +362,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "resizable.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/resizable.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/resizable.tsx",
         type: "file",
       },
     ],
@@ -363,7 +374,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "scroll-area.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/scroll-area.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/scroll-area.tsx",
         type: "file",
       },
     ],
@@ -375,7 +386,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "select.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/select.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/select.tsx",
         type: "file",
       },
     ],
@@ -387,7 +398,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "sidebar.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/Sidebar/sidebar.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/Sidebar/sidebar.tsx",
         type: "file",
       },
     ],
@@ -399,7 +410,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "skeleton.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/skeleton.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/skeleton.tsx",
         type: "file",
       },
     ],
@@ -410,7 +421,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "slider.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/slider.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/slider.tsx",
         type: "file",
       },
     ],
@@ -422,7 +433,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "switch.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/switch.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/switch.tsx",
         type: "file",
       },
     ],
@@ -434,7 +445,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "table.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/table.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/table.tsx",
         type: "file",
       },
     ],
@@ -445,7 +456,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "tabs.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/tabs.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/tabs.tsx",
         type: "file",
       },
     ],
@@ -457,7 +468,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "textarea.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/textarea.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/textarea.tsx",
         type: "file",
       },
     ],
@@ -468,7 +479,7 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "toast.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/toast.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/toast.tsx",
         type: "file",
       },
     ],
@@ -480,19 +491,19 @@ export const COMPONENTS: Component[] = [
     files: [
       {
         path: "toggle.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/toggle.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/toggle.tsx",
         type: "file",
       },
     ],
     dependencies: ["@radix-ui/react-toggle"],
   },
   {
-    name: "Video Player",
+    name: "VideoPlayer",
     description: "Video player component with controls",
     files: [
       {
         path: "video-player.tsx",
-        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/2.0/src/components/ui/VideoPlayer/video-player.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/video-player.tsx",
         type: "file",
       },
     ],
