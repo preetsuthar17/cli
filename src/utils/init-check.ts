@@ -1,22 +1,27 @@
 import fs from "fs-extra";
 import { join } from "path";
+import { FrameworkType } from "./project.js";
+import {
+  getFrameworkConfig,
+  getComponentsDir,
+  getUtilsDir,
+} from "../config/frameworks.js";
 
 /**
  * Check if HextaUI has been initialized in the project
  */
 export async function isHextaUIInitialized(
-  projectRoot: string,
+  projectRoot: string
 ): Promise<boolean> {
-  const componentsDir = join(projectRoot, "src", "components", "ui");
+  // Check for marker file first (new approach)
+  const markerFile = join(projectRoot, ".hextaui");
+  if (await fs.pathExists(markerFile)) {
+    return true;
+  }
+
+  // Fallback: check for utils file (legacy approach)
   const utilsFile = join(projectRoot, "src", "lib", "utils.ts");
-  const colorUtilsFile = join(projectRoot, "src", "lib", "color-utils.ts");
-
-  // Check if all required files/directories exist
-  const hasComponentsDir = await fs.pathExists(componentsDir);
-  const hasUtilsFile = await fs.pathExists(utilsFile);
-  const hasColorUtilsFile = await fs.pathExists(colorUtilsFile);
-
-  return hasComponentsDir && hasUtilsFile && hasColorUtilsFile;
+  return await fs.pathExists(utilsFile);
 }
 
 /**

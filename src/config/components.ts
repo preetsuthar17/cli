@@ -1,9 +1,18 @@
+import { FrameworkType } from "../utils/project.js";
+
 export interface Component {
   name: string;
   description: string;
   files: ComponentFile[];
   dependencies?: string[];
   requiredComponents?: string[]; // Other HextaUI components this component requires
+  frameworkSpecific?: Partial<Record<FrameworkType, ComponentOverride>>;
+}
+
+export interface ComponentOverride {
+  files?: ComponentFile[];
+  dependencies?: string[];
+  requiredComponents?: string[];
 }
 
 export interface ComponentFile {
@@ -25,6 +34,15 @@ export const COMPONENTS: Component[] = [
       },
     ],
     dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    frameworkSpecific: {
+      astro: {
+        dependencies: [
+          "@radix-ui/react-slot",
+          "class-variance-authority",
+          "@astrojs/react",
+        ],
+      },
+    },
   },
   {
     name: "Card",
@@ -237,6 +255,22 @@ export const COMPONENTS: Component[] = [
         type: "file",
       },
     ],
+    frameworkSpecific: {
+      astro: {
+        files: [
+          {
+            path: "date-picker.tsx",
+            url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/datepicker.tsx",
+            type: "file",
+          },
+        ],
+        dependencies: ["@astrojs/react"],
+      },
+      vite: {
+        // Vite might need different build optimizations
+        dependencies: [],
+      },
+    },
   },
   {
     name: "Drawer",
@@ -510,3 +544,32 @@ export const COMPONENTS: Component[] = [
     dependencies: ["video-player"],
   },
 ];
+
+/**
+ * Get component configuration for a specific framework
+ */
+export function getComponentForFramework(
+  component: Component,
+  framework: FrameworkType
+): Component {
+  if (!component.frameworkSpecific?.[framework]) {
+    return component;
+  }
+
+  const override = component.frameworkSpecific[framework];
+
+  const result: Component = {
+    ...component,
+    files: override.files ?? component.files,
+  };
+
+  if (override.dependencies !== undefined) {
+    result.dependencies = override.dependencies;
+  }
+
+  if (override.requiredComponents !== undefined) {
+    result.requiredComponents = override.requiredComponents;
+  }
+
+  return result;
+}

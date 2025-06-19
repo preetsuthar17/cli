@@ -1,6 +1,6 @@
 {
   "name": "hextaui",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -18,6 +18,8 @@
     "ui",
     "components",
     "next.js",
+    "vite",
+    "astro",
     "react",
     "tailwind",
     "cli",
@@ -36,7 +38,7 @@
     "url": "https://github.com/preetsuthar17"
   },
   "license": "MIT",
-  "description": "Build stunning websites effortlessly. HextaUI CLI tool to easily install components.",
+  "description": "Build stunning websites effortlessly. HextaUI CLI tool to easily install components for Next.js, Vite, and Astro projects.",
   "homepage": "https://hextaui.com",
   "repository": {
     "type": "git",

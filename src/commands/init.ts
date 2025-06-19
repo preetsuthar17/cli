@@ -2,12 +2,17 @@ import * as p from "@clack/prompts";
 import pc from "picocolors";
 import fs from "fs-extra";
 import { join } from "path";
-import { findProjectRoot } from "../utils/project.js";
+import { findProjectRoot, FrameworkType } from "../utils/project.js";
 import {
   installDependencies,
   checkDependencyManager,
 } from "../utils/dependencies.js";
 import { createInitMarker } from "../utils/init-check.js";
+import {
+  getFrameworkConfig,
+  getComponentsDir,
+  getUtilsDir,
+} from "../config/frameworks.js";
 
 const HEXTAUI_CSS_VARIABLES = `
 :root {
@@ -71,17 +76,45 @@ const HEXTAUI_CSS_VARIABLES = `
   --hu-ring: 0, 0%, 56%;
 }`;
 
-async function findGlobalCssFile(projectRoot: string): Promise<string | null> {
-  const possiblePaths = [
-    "src/app/globals.css",
-    "app/globals.css",
-    "src/styles/globals.css",
-    "styles/globals.css",
-    "src/global.css",
-    "global.css",
-    "src/app/global.css",
-    "app/global.css",
-  ];
+async function findGlobalCssFile(
+  projectRoot: string,
+  framework: FrameworkType
+): Promise<string | null> {
+  const possiblePaths = (() => {
+    switch (framework) {
+      case "nextjs":
+        return [
+          "src/app/globals.css",
+          "app/globals.css",
+          "src/styles/globals.css",
+          "styles/globals.css",
+          "src/global.css",
+          "global.css",
+        ];
+      case "vite":
+        return [
+          "src/index.css",
+          "src/App.css",
+          "src/main.css",
+          "src/styles/index.css",
+          "src/styles/global.css",
+        ];
+      case "astro":
+        return [
+          "src/styles/global.css",
+          "src/styles/globals.css",
+          "src/global.css",
+          "src/layouts/Layout.astro",
+        ];
+      default:
+        return [
+          "src/index.css",
+          "src/styles/index.css",
+          "src/global.css",
+          "src/app.css",
+        ];
+    }
+  })();
 
   for (const possiblePath of possiblePaths) {
     const fullPath = join(projectRoot, possiblePath);
@@ -157,14 +190,17 @@ function removeExistingHextaUIVariables(content: string): string {
   return cleanedLines.join("\n").replace(/\n{3,}/g, "\n\n");
 }
 
-async function injectCssVariables(projectRoot: string): Promise<void> {
-  const globalCssPath = await findGlobalCssFile(projectRoot);
+async function injectCssVariables(
+  projectRoot: string,
+  framework: FrameworkType
+): Promise<void> {
+  const globalCssPath = await findGlobalCssFile(projectRoot, framework);
 
   if (!globalCssPath) {
     p.log.warn("⚠️  Could not find global.css file automatically.");
     p.note(
       `Please create a global.css file and add these variables:\n\n${HEXTAUI_CSS_VARIABLES}`,
-      "CSS Variables (Manual Setup)",
+      "CSS Variables (Manual Setup)"
     );
     return;
   }
@@ -198,7 +234,7 @@ async function injectCssVariables(projectRoot: string): Promise<void> {
 
     await fs.writeFile(globalCssPath, newContent);
     p.log.success(
-      `✓ Updated HextaUI CSS variables in ${pc.cyan(relativePath)}`,
+      `✓ Updated HextaUI CSS variables in ${pc.cyan(relativePath)}`
     );
   } else {
     // Check if there are existing CSS variables that might conflict
@@ -208,7 +244,7 @@ async function injectCssVariables(projectRoot: string): Promise<void> {
     if (hasExistingVars) {
       p.log.warn(
         `⚠️  Existing CSS variables found in ${relativePath}.\n` +
-          `   Please review and remove any conflicting variables.`,
+          `   Please review and remove any conflicting variables.`
       );
 
       const shouldContinue = await p.confirm({
@@ -237,10 +273,69 @@ async function injectCssVariables(projectRoot: string): Promise<void> {
       `• Consistent color scheme across components\n` +
       `• Easy customization of the design system\n\n` +
       `${pc.yellow(
-        "Important:",
+        "Important:"
       )} Remove any conflicting CSS variables to avoid styling issues.`,
-    "CSS Variables Added",
+    "CSS Variables Added"
   );
+}
+
+function getFrameworkSpecificInstructions(framework: FrameworkType): string {
+  switch (framework) {
+    case "vite":
+      return `1. Add alias configuration to your vite.config.js/ts:
+
+${pc.cyan(`resolve: {
+  alias: {
+    "@": path.resolve(__dirname, "./src"),
+  },
+},`)}
+
+2. Update your tsconfig.json baseUrl and paths:
+
+${pc.cyan(`{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}`)}
+
+3. Make sure Tailwind CSS is properly configured`;
+
+    case "astro":
+      return `1. Ensure you have the required integrations in astro.config.js/ts:
+
+${pc.cyan(`import { defineConfig } from 'astro/config';
+import react from '@astrojs/react';
+import tailwind from '@astrojs/tailwind';
+
+export default defineConfig({
+  integrations: [
+    react(),
+    tailwind({
+      applyBaseStyles: false,
+    }),
+  ],
+});`)}
+
+2. Update your tsconfig.json paths:
+
+${pc.cyan(`{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}`)}
+
+3. Install required dependencies:
+   ${pc.cyan("npm install @astrojs/react @astrojs/tailwind")}`;
+
+    default:
+      return "";
+  }
 }
 
 export async function initCommand() {
@@ -248,21 +343,30 @@ export async function initCommand() {
 
   p.intro(pc.bgCyan(pc.black(" HextaUI Init ")));
 
-  // Find project root
-  const projectRoot = await findProjectRoot();
-  if (!projectRoot) {
+  // Find project root and detect framework
+  const projectInfo = await findProjectRoot();
+  if (!projectInfo) {
     p.cancel(
-      "Could not find a Next.js project. Please run this command in a Next.js project.",
+      "Could not find a supported project. Please run this command in a Next.js, Vite, or Astro project."
     );
     process.exit(1);
   }
+
+  const { root: projectRoot, framework } = projectInfo;
+  const config = getFrameworkConfig(framework);
+
+  p.log.info(`Detected ${pc.cyan(config.displayName)} project`);
 
   const s = p.spinner();
   s.start("Initializing HextaUI...");
   try {
     // Create components/ui directory
-    const componentsDir = join(projectRoot, "src", "components", "ui");
-    await fs.ensureDir(componentsDir); // Create utils files
+    const componentsDir = getComponentsDir(framework, projectRoot);
+    await fs.ensureDir(componentsDir);
+
+    // Create utils directory and files
+    const libDir = getUtilsDir(framework, projectRoot);
+    await fs.ensureDir(libDir);
     const utilsContent = `import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -555,8 +659,7 @@ export function getFormatPlaceholder(format: ColorFormat): string {
   }
 }`;
 
-    const libDir = join(projectRoot, "src", "lib");
-    await fs.ensureDir(libDir);
+    // Write utility files
     await fs.writeFile(join(libDir, "utils.ts"), utilsContent);
     await fs.writeFile(join(libDir, "color-utils.ts"), colorUtilsContent);
     s.stop("HextaUI initialized successfully");
@@ -566,21 +669,25 @@ export function getFormatPlaceholder(format: ColorFormat): string {
     s.start(`Installing required dependencies with ${packageManager}...`);
 
     try {
-      await installDependencies(["clsx", "tailwind-merge"], projectRoot);
+      await installDependencies(config.requiredDependencies, projectRoot);
       s.stop("Dependencies installed successfully");
     } catch (error) {
       s.stop("Failed to install some dependencies");
       p.log.warn(
-        `Please manually install: ${pc.yellow("clsx tailwind-merge")}`,
+        `Please manually install: ${pc.yellow(
+          config.requiredDependencies.join(" ")
+        )}`
       );
       p.log.info(
         `Run: ${pc.cyan(
           `${packageManager} ${
             packageManager === "npm" ? "install" : "add"
-          } clsx tailwind-merge`,
-        )}`,
+          } ${config.requiredDependencies.join(" ")}`
+        )}`
       );
-    } // Create initialization marker
+    }
+
+    // Create initialization marker
     await createInitMarker(projectRoot);
 
     // Add CSS variables injection step
@@ -590,28 +697,39 @@ export function getFormatPlaceholder(format: ColorFormat): string {
     });
 
     if (!p.isCancel(shouldInjectCss) && shouldInjectCss) {
-      await injectCssVariables(projectRoot);
+      await injectCssVariables(projectRoot, framework);
     } else {
       p.note(
         `You can manually add the CSS variables later:\n\n${HEXTAUI_CSS_VARIABLES}`,
-        "CSS Variables (Manual Setup)",
+        "CSS Variables (Manual Setup)"
+      );
+    }
+
+    // Show framework-specific setup instructions
+    if (framework === "vite" || framework === "astro") {
+      p.note(
+        `${pc.yellow("Framework-specific setup required:")}\n\n` +
+          getFrameworkSpecificInstructions(framework),
+        `${config.displayName} Setup`
       );
     }
 
     p.note(
       `Created:\n` +
-        `${pc.cyan("src/components/ui/")} - Components directory\n` +
-        `${pc.cyan("src/lib/utils.ts")} - Utility functions\n` +
-        `${pc.cyan("src/lib/color-utils.ts")} - Color utility functions\n\n` +
+        `${pc.cyan(config.componentsPath + "/")} - Components directory\n` +
+        `${pc.cyan(config.utilsPath + "/utils.ts")} - Utility functions\n` +
+        `${pc.cyan(
+          config.utilsPath + "/color-utils.ts"
+        )} - Color utility functions\n\n` +
         `${pc.green("✓")} Base dependencies installed\n` +
         `${pc.green("✓")} CSS variables ${
           shouldInjectCss ? "added" : "skipped"
         }`,
-      "Files created",
+      "Files created"
     );
 
     p.outro(
-      pc.green('HextaUI is ready! Run "npx hextaui add" to add components.'),
+      pc.green('HextaUI is ready! Run "npx hextaui add" to add components.')
     );
   } catch (error) {
     s.stop("Failed to initialize HextaUI");

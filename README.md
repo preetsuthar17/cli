@@ -1,6 +1,6 @@
 # HextaUI CLI
 
-A command-line tool for adding customizable UI components to Next.js projects.
+A command-line tool for adding customizable UI components to Next.js, Vite, and Astro projects.
 
 [![npm version](https://badge.fury.io/js/hextaui.svg)](https://badge.fury.io/js/hextaui)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -34,11 +34,12 @@ npx hextaui@latest init
 npx hextaui init
 ```
 
-Creates:
+Automatically detects your framework and creates:
 
 - `src/components/ui/` for components
 - `src/lib/utils.ts` for utilities
 - Configures project for HextaUI
+- Framework-specific setup instructions
 
 ### Add Components
 
@@ -96,10 +97,30 @@ npx hextaui list
 
 ## ⚙️ Requirements
 
-- Next.js 13+
-- React 18+
-- Tailwind CSS v4
-- Node.js 16+
+- **Next.js**: 13+ with React 18+
+- **Vite**: Latest version with React 18+
+- **Astro**: Latest version with React integration
+- **All frameworks**: Tailwind CSS v4 and Node.js 16+
+
+## 🎯 Supported Frameworks
+
+### Next.js
+
+- Full support for App Router and Pages Router
+- Automatic CSS injection into global styles
+- TypeScript path aliases configuration
+
+### Vite + React
+
+- Automatic alias configuration guide
+- Support for all Vite React templates
+- TypeScript integration
+
+### Astro
+
+- React integration setup instructions
+- Tailwind CSS configuration
+- TypeScript support with path aliases
 
 ## 📁 Project Structure
 
@@ -111,7 +132,8 @@ src/
 │       ├── card/
 │       └── ...
 └── lib/
-    └── utils.ts
+    ├── utils.ts
+    └── color-utils.ts
 ```
 
 ## 🔧 Commands
