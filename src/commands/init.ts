@@ -16,9 +16,6 @@ import {
 
 const HEXTAUI_CSS_VARIABLES = `
 :root {
-  --hu-font-geist: var(--font-geist);
-  --hu-font-jetbrains: var(--font-jetbrains-mono);
-
   --radius: 0.75rem;
 
   --hu-background: 0, 0%, 100%;
@@ -45,8 +42,6 @@ const HEXTAUI_CSS_VARIABLES = `
   --hu-border: 0, 0%, 92%;
   --hu-input: 0, 0%, 100%;
   --hu-ring: 0, 0%, 71%;
-
-  --color-fd-background: hsl(var(--hu-background));
 }
 
 .dark {

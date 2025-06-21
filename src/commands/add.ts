@@ -116,7 +116,9 @@ export async function addComponents(
     // Show component selection
     const userSelection = await p.multiselect({
       message: "Which components would you like to add?",
-      options: COMPONENTS.map((component) => ({
+      options: COMPONENTS
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((component) => ({
         value: component.name,
         label: component.name,
         hint: component.description,

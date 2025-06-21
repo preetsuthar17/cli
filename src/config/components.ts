@@ -497,6 +497,18 @@ export const COMPONENTS: Component[] = [
     dependencies: ["@radix-ui/react-tabs"],
   },
   {
+    name: "TagInput",
+    description: "Input component for adding and managing multiple tags",
+    files: [
+      {
+        path: "tag-input.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/tag-input.tsx",
+        type: "file",
+      },
+    ],
+    requiredComponents: ["Chip", "Input"],
+  },
+  {
     name: "Textarea",
     description: "Multi-line text input component",
     files: [
@@ -532,6 +544,18 @@ export const COMPONENTS: Component[] = [
     dependencies: ["@radix-ui/react-toggle"],
   },
   {
+    name: "TreeView",
+    description: "Hierarchical tree view component",
+    files: [
+      {
+        path: "tree.tsx",
+        url: "https://raw.githubusercontent.com/preetsuthar17/HextaUI/refs/heads/master/src/components/ui/tree.tsx",
+        type: "file",
+      },
+    ],
+    dependencies: ["@radix-ui/react-slot"],
+  },
+  {
     name: "VideoPlayer",
     description: "Video player component with controls",
     files: [
@@ -541,7 +565,6 @@ export const COMPONENTS: Component[] = [
         type: "file",
       },
     ],
-    dependencies: ["video-player"],
   },
 ];
 
