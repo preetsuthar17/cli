@@ -17,7 +17,8 @@ import {
 const HEXTAUI_CSS_VARIABLES = `
 :root {
   --radius: 0.75rem;
-
+  --card-radius: 1rem;
+  
   --hu-background: 0, 0%, 100%;
   --hu-foreground: 0, 0%, 14%;
 
