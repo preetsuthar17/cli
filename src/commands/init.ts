@@ -15,17 +15,50 @@ import {
 } from "../config/frameworks.js";
 
 const HEXTAUI_CSS_VARIABLES = `
+@theme {
+  --radius-ele: var(--radius);
+  --radius-card: var(--card-radius);
+
+  --color-background: hsl(var(--hu-background));
+  --color-foreground: hsl(var(--hu-foreground));
+
+  --color-card: hsl(var(--hu-card));
+  --color-card-foreground: hsl(var(--hu-card-foreground));
+
+  --color-primary: hsl(var(--hu-primary));
+  --color-primary-foreground: hsl(var(--hu-primary-foreground));
+
+  --color-accent: hsl(var(--hu-accent));
+  --color-accent-foreground: hsl(var(--hu-accent-foreground));
+
+  --color-secondary: hsl(var(--hu-secondary));
+  --color-secondary-foreground: hsl(var(--hu-secondary-foreground));
+
+  --color-muted: hsl(var(--hu-muted));
+  --color-muted-foreground: hsl(var(--hu-muted-foreground));
+
+  --color-destructive: hsl(var(--hu-destructive));
+  --color-destructive-foreground: hsl(var(--hu-destructive-foreground));
+
+  --color-border: hsl(var(--hu-border));
+  --color-input: hsl(var(--hu-input));
+  --color-ring: hsl(var(--hu-ring));
+}
+
 :root {
-  --radius: 0.75rem;
+  --hu-font-geist: var(--font-geist);
+  --hu-font-jetbrains: var(--font-jetbrains-mono);
+
+  --radius: 0.8rem;
   --card-radius: 1rem;
-  
+
   --hu-background: 0, 0%, 100%;
   --hu-foreground: 0, 0%, 14%;
 
   --hu-card: 0, 0%, 99%;
   --hu-card-foreground: 0, 0%, 14%;
 
-  --hu-primary: 0, 0%, 20%;
+  --hu-primary: 235, 100%, 60%;
   --hu-primary-foreground: 0, 0%, 98%;
 
   --hu-secondary: 0, 0%, 97%;
@@ -43,6 +76,9 @@ const HEXTAUI_CSS_VARIABLES = `
   --hu-border: 0, 0%, 92%;
   --hu-input: 0, 0%, 100%;
   --hu-ring: 0, 0%, 71%;
+
+  --color-fd-background: hsl(var(--hu-background));
+  --color-fd-card: hsl(var(--hu-background));
 }
 
 .dark {
@@ -52,8 +88,8 @@ const HEXTAUI_CSS_VARIABLES = `
   --hu-card: 0, 0%, 9%;
   --hu-card-foreground: 0, 0%, 100%;
 
-  --hu-primary: 0, 0%, 100%;
-  --hu-primary-foreground: 0, 0%, 20%;
+  --hu-primary: 235, 100%, 60%;
+  --hu-primary-foreground: 0, 0%, 98%;
 
   --hu-secondary: 0, 0%, 15%;
   --hu-secondary-foreground: 0, 0%, 100%;
@@ -70,11 +106,14 @@ const HEXTAUI_CSS_VARIABLES = `
   --hu-border: 0, 0%, 100%, 10%;
   --hu-input: 0, 0%, 100%, 5%;
   --hu-ring: 0, 0%, 56%;
+
+  --color-fd-background: hsl(var(--hu-background));
+  --color-fd-card: hsl(var(--hu-background));
 }`;
 
 async function findGlobalCssFile(
   projectRoot: string,
-  framework: FrameworkType
+  framework: FrameworkType,
 ): Promise<string | null> {
   const possiblePaths = (() => {
     switch (framework) {
@@ -188,7 +227,7 @@ function removeExistingHextaUIVariables(content: string): string {
 
 async function injectCssVariables(
   projectRoot: string,
-  framework: FrameworkType
+  framework: FrameworkType,
 ): Promise<void> {
   const globalCssPath = await findGlobalCssFile(projectRoot, framework);
 
@@ -196,7 +235,7 @@ async function injectCssVariables(
     p.log.warn("⚠️  Could not find global.css file automatically.");
     p.note(
       `Please create a global.css file and add these variables:\n\n${HEXTAUI_CSS_VARIABLES}`,
-      "CSS Variables (Manual Setup)"
+      "CSS Variables (Manual Setup)",
     );
     return;
   }
@@ -230,7 +269,7 @@ async function injectCssVariables(
 
     await fs.writeFile(globalCssPath, newContent);
     p.log.success(
-      `✓ Updated HextaUI CSS variables in ${pc.cyan(relativePath)}`
+      `✓ Updated HextaUI CSS variables in ${pc.cyan(relativePath)}`,
     );
   } else {
     // Check if there are existing CSS variables that might conflict
@@ -240,7 +279,7 @@ async function injectCssVariables(
     if (hasExistingVars) {
       p.log.warn(
         `⚠️  Existing CSS variables found in ${relativePath}.\n` +
-          `   Please review and remove any conflicting variables.`
+          `   Please review and remove any conflicting variables.`,
       );
 
       const shouldContinue = await p.confirm({
@@ -269,9 +308,9 @@ async function injectCssVariables(
       `• Consistent color scheme across components\n` +
       `• Easy customization of the design system\n\n` +
       `${pc.yellow(
-        "Important:"
+        "Important:",
       )} Remove any conflicting CSS variables to avoid styling issues.`,
-    "CSS Variables Added"
+    "CSS Variables Added",
   );
 }
 
@@ -343,7 +382,7 @@ export async function initCommand() {
   const projectInfo = await findProjectRoot();
   if (!projectInfo) {
     p.cancel(
-      "Could not find a supported project. Please run this command in a Next.js, Vite, or Astro project."
+      "Could not find a supported project. Please run this command in a Next.js, Vite, or Astro project.",
     );
     process.exit(1);
   }
@@ -671,15 +710,15 @@ export function getFormatPlaceholder(format: ColorFormat): string {
       s.stop("Failed to install some dependencies");
       p.log.warn(
         `Please manually install: ${pc.yellow(
-          config.requiredDependencies.join(" ")
-        )}`
+          config.requiredDependencies.join(" "),
+        )}`,
       );
       p.log.info(
         `Run: ${pc.cyan(
           `${packageManager} ${
             packageManager === "npm" ? "install" : "add"
-          } ${config.requiredDependencies.join(" ")}`
-        )}`
+          } ${config.requiredDependencies.join(" ")}`,
+        )}`,
       );
     }
 
@@ -697,7 +736,7 @@ export function getFormatPlaceholder(format: ColorFormat): string {
     } else {
       p.note(
         `You can manually add the CSS variables later:\n\n${HEXTAUI_CSS_VARIABLES}`,
-        "CSS Variables (Manual Setup)"
+        "CSS Variables (Manual Setup)",
       );
     }
 
@@ -706,7 +745,7 @@ export function getFormatPlaceholder(format: ColorFormat): string {
       p.note(
         `${pc.yellow("Framework-specific setup required:")}\n\n` +
           getFrameworkSpecificInstructions(framework),
-        `${config.displayName} Setup`
+        `${config.displayName} Setup`,
       );
     }
 
@@ -715,17 +754,17 @@ export function getFormatPlaceholder(format: ColorFormat): string {
         `${pc.cyan(config.componentsPath + "/")} - Components directory\n` +
         `${pc.cyan(config.utilsPath + "/utils.ts")} - Utility functions\n` +
         `${pc.cyan(
-          config.utilsPath + "/color-utils.ts"
+          config.utilsPath + "/color-utils.ts",
         )} - Color utility functions\n\n` +
         `${pc.green("✓")} Base dependencies installed\n` +
         `${pc.green("✓")} CSS variables ${
           shouldInjectCss ? "added" : "skipped"
         }`,
-      "Files created"
+      "Files created",
     );
 
     p.outro(
-      pc.green('HextaUI is ready! Run "npx hextaui add" to add components.')
+      pc.green('HextaUI is ready! Run "npx hextaui add" to add components.'),
     );
   } catch (error) {
     s.stop("Failed to initialize HextaUI");
